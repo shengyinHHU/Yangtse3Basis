@@ -1,0 +1,1631 @@
+{
+  "modules": [
+    {
+      "code": "user-permission",
+      "name": "用户及权限",
+      "category": "体系",
+      "owner": "系统管理员",
+      "summary": "对接统一身份认证与组织架构，实现用户、岗位角色和权限配置管理。",
+      "status": "implemented",
+      "features": [
+        {
+          "code": "user-permission-user",
+          "name": "用户管理",
+          "type": "permission",
+          "status": "implemented",
+          "description": "整合创建、修改、停用/删除和查询用户能力，统一承接身份认证同步、人员信息维护、账号状态管理和操作留痕。",
+          "tags": [
+            "创建用户",
+            "修改用户",
+            "删除用户",
+            "查询用户"
+          ],
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "user-permission-org-maintain",
+          "name": "公司架构维护",
+          "type": "config",
+          "status": "implemented",
+          "description": "整合公司架构新增、修改和删除能力，按公司、运行部/业务部门、工区、班组层级维护组织节点，并同步数据中台。",
+          "tags": [
+            "新增公司架构",
+            "修改公司架构",
+            "删除公司架构"
+          ],
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "user-permission-org-query",
+          "name": "查询公司架构",
+          "type": "search",
+          "status": "implemented",
+          "description": "以树形结构展示完整组织架构，支持按节点名称、编码检索定位。",
+          "tags": [
+            "查询公司架构"
+          ],
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "user-permission-role",
+          "name": "岗位角色管理",
+          "type": "permission",
+          "status": "implemented",
+          "description": "整合岗位角色新增、修改、删除和查询能力，维护角色权限集、组织架构绑定关系以及角色下关联用户。",
+          "tags": [
+            "新增岗位角色",
+            "修改岗位角色",
+            "删除岗位角色",
+            "查询岗位角色"
+          ],
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "user-permission-grant",
+          "name": "用户权限配置",
+          "type": "permission",
+          "status": "implemented",
+          "description": "整合用户权限新增、修改、删除和查询能力，区分岗位继承权限与个性化权限，支持权限实时生效和回收。",
+          "tags": [
+            "新增用户权限",
+            "修改用户权限",
+            "删除用户权限",
+            "查询用户权限"
+          ],
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        }
+      ]
+    },
+    {
+      "code": "leader-dashboard",
+      "name": "首页-领导",
+      "category": "总览",
+      "owner": "公司领导",
+      "summary": "面向公司领导展示任务统计、运行部任务、要素清单、预警和排名。",
+      "status": "implemented",
+      "features": [
+        {
+          "code": "leader-dashboard-f001",
+          "name": "运行部任务总览信息统计",
+          "type": "dashboard",
+          "status": "implemented",
+          "description": "自动聚合运行部所有任务状态（未开始/进行中/已完成），按任务类型、优先级分类统计，宏观掌握运行部任务负荷，快速识别瓶颈环节。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "leader-dashboard-f002",
+          "name": "工作任务情况总览统计",
+          "type": "dashboard",
+          "status": "implemented",
+          "description": "动态追踪工作任务进度，按责任班组展开完成率趋势分析，评估班组执行力，优化任务分配策略。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "leader-dashboard-f003",
+          "name": "工作任务时长总览统计",
+          "type": "dashboard",
+          "status": "implemented",
+          "description": "分析任务平均耗时，识别超时任务模式，辅助生产调度决策。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "leader-dashboard-f004",
+          "name": "履职提醒消息总览统计",
+          "type": "dashboard",
+          "status": "implemented",
+          "description": "问题状态（未分配/整改中/已闭环）同步任务状态，闭环验证后自动归档至知识库。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "leader-dashboard-f005",
+          "name": "逾期任务信息统计",
+          "type": "dashboard",
+          "status": "implemented",
+          "description": "扫描任务截止时间小于当前时间且状态不为\"已完成\"的任务，关联责任人绩效，预警任务逾期与履职风险。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "leader-dashboard-f006",
+          "name": "磁贴式组件管理",
+          "type": "dashboard",
+          "status": "implemented",
+          "description": "支持看板磁贴的自由拖拽、添加、删除及布局配置，满足不同领导个性化查看需求。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        }
+      ]
+    },
+    {
+      "code": "operator-dashboard",
+      "name": "首页-三大员",
+      "category": "总览",
+      "owner": "三大员",
+      "summary": "面向三大员展示班组任务、体系执行、任务完成与待办提醒。",
+      "status": "implemented",
+      "features": [
+        {
+          "code": "operator-dashboard-f001",
+          "name": "班组任务清单统计",
+          "type": "dashboard",
+          "status": "implemented",
+          "description": "按任务类型（班组/例行/专项/作业票）分类聚合，展示任务总量、完成率、超期数量，红绿灯标识风险等级。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "operator-dashboard-f002",
+          "name": "例行任务清单统计",
+          "type": "dashboard",
+          "status": "implemented",
+          "description": "按时间粒度（日/周/月）动态筛选例行任务，支持柱状图趋势分析与饼图占比分布。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "operator-dashboard-f003",
+          "name": "专项任务清单统计",
+          "type": "dashboard",
+          "status": "implemented",
+          "description": "按任务类型与时间查询专项任务清单，展示任务执行进度与完成情况。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "operator-dashboard-f004",
+          "name": "作业票任务清单统计",
+          "type": "dashboard",
+          "status": "implemented",
+          "description": "关联作业票系统，统计作业票任务的执行情况与闭环状态。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "operator-dashboard-f005",
+          "name": "按任务类型与时间查询日、周、月任务总量、完成率、超期数量",
+          "type": "search",
+          "status": "implemented",
+          "description": "支持按任务类型与时间维度查询日、周、月任务总量、完成率及超期数量，支持图表联动展示。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "operator-dashboard-f006",
+          "name": "运行部任务完成情况查询",
+          "type": "search",
+          "status": "implemented",
+          "description": "筛选运行部，查看任务完成率，钻取明细任务。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "operator-dashboard-f007",
+          "name": "我的专项任务、例行任务、逾期任务完成情况查询",
+          "type": "dashboard",
+          "status": "implemented",
+          "description": "个人需要执行的任务情况统计，查看本人负责的专项、例行及逾期任务完成进度。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "operator-dashboard-f008",
+          "name": "任务履职消息提醒",
+          "type": "workflow",
+          "status": "implemented",
+          "description": "问题状态（未分配/整改中/已闭环）同步任务状态，闭环验证后自动归档至知识库。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "operator-dashboard-f009",
+          "name": "工作任务记录分配、转交、撤回、完结",
+          "type": "assessment",
+          "status": "implemented",
+          "description": "对完成任务情况进行描述和评价，支持任务分配、转交、撤回及完结操作。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "operator-dashboard-f010",
+          "name": "磁贴式组件管理",
+          "type": "dashboard",
+          "status": "implemented",
+          "description": "支持看板磁贴的自由拖拽、添加、删除及布局配置，满足三大员个性化查看需求。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        }
+      ]
+    },
+    {
+      "code": "policy-catalog",
+      "name": "制度清单",
+      "category": "体系",
+      "owner": "体系办公室",
+      "summary": "管理制度条款、制度适用范围与制度条款查询。",
+      "status": "implemented",
+      "features": [
+        {
+          "code": "policy-catalog-f001",
+          "name": "制度条款信息查询",
+          "type": "search",
+          "status": "implemented",
+          "description": "引用一体化系统制度清单，支持按制度名称、条款编号、关键词检索查询。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "policy-catalog-f002",
+          "name": "制度条款信息查看详情",
+          "type": "search",
+          "status": "implemented",
+          "description": "引用一体化系统数据，查看制度条款的完整内容、适用范围及版本信息。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        }
+      ]
+    },
+    {
+      "code": "work-task",
+      "name": "工作任务",
+      "category": "三基",
+      "owner": "各责任部门",
+      "summary": "围绕岗位任务、工作标准、任务分解、派发、督办和闭环归档管理。",
+      "status": "implemented",
+      "features": [
+        {
+          "code": "work-task-f001",
+          "name": "工作任务管理",
+          "type": "task",
+          "status": "implemented",
+          "description": "统一维护工作任务知识信息，支持查询、查看详情、导入、导出、新增、修改和删除。",
+          "tags": [
+            "查询工作任务",
+            "查看详情",
+            "导入工作任务",
+            "导出工作任务",
+            "新增工作任务",
+            "修改工作任务",
+            "删除工作任务"
+          ],
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "work-task-f002",
+          "name": "绑定条款信息",
+          "type": "task",
+          "status": "implemented",
+          "description": "将工作任务知识与制度条款进行关联绑定，实现任务执行有据可依。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "work-task-f003",
+          "name": "绑定岗位信息",
+          "type": "task",
+          "status": "implemented",
+          "description": "将工作任务知识与岗位进行绑定，明确各岗位需执行的工作任务标准。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "work-task-f004",
+          "name": "绑定任务审核流程",
+          "type": "workflow",
+          "status": "implemented",
+          "description": "流程与任务可按人或按岗位进行配置绑定，设置任务审核流程。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "work-task-f005",
+          "name": "绑定任务修订审核流程",
+          "type": "workflow",
+          "status": "implemented",
+          "description": "配置任务修订的审核流程，确保知识变更经过审批后生效。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        }
+      ]
+    },
+    {
+      "code": "work-standard",
+      "name": "工作标准",
+      "category": "基础",
+      "owner": "专业管理部门",
+      "summary": "维护基层工作标准、岗位工作标准及标准适用范围。",
+      "status": "implemented",
+      "features": [
+        {
+          "code": "work-standard-f001",
+          "name": "工作标准管理",
+          "type": "standard",
+          "status": "implemented",
+          "description": "统一维护基层工作标准信息及附件，支持标准查询、新增、修改、删除、导出、预览和下载。",
+          "tags": [
+            "查询工作标准",
+            "新增工作标准",
+            "修改工作标准",
+            "删除工作标准",
+            "导出工作标准",
+            "预览附件",
+            "下载附件"
+          ],
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        }
+      ]
+    },
+    {
+      "code": "report-ledger",
+      "name": "报表台账",
+      "category": "基础",
+      "owner": "专业管理部门",
+      "summary": "配置报表台账模板、字段、填报周期、归档与查询。",
+      "status": "implemented",
+      "features": [
+        {
+          "code": "report-ledger-f001",
+          "name": "报表台账信息新增",
+          "type": "form",
+          "status": "implemented",
+          "description": "新增报表台账模板，定义台账字段、填报周期及责任部门。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "report-ledger-f002",
+          "name": "报表台账信息修改",
+          "type": "form",
+          "status": "implemented",
+          "description": "支持修改报表台账模板配置，调整字段及填报规则。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "report-ledger-f003",
+          "name": "报表台账信息删除",
+          "type": "delete",
+          "status": "implemented",
+          "description": "支持删除不再使用的报表台账模板。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "report-ledger-f004",
+          "name": "报表台账信息导出",
+          "type": "archive",
+          "status": "implemented",
+          "description": "支持导出报表台账数据及模板，支持按时间范围筛选导出。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "report-ledger-f005",
+          "name": "报表台账附件预览",
+          "type": "archive",
+          "status": "implemented",
+          "description": "在线预览报表台账的附件文件，支持多格式文档预览。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        }
+      ]
+    },
+    {
+      "code": "post-workbench",
+      "name": "岗位工作台",
+      "category": "三基",
+      "owner": "岗位人员",
+      "summary": "按岗位展示任务、标准、消息和个人工作办理入口。",
+      "status": "implemented",
+      "features": [
+        {
+          "code": "post-workbench-f001",
+          "name": "岗位工作任务信息查询",
+          "type": "search",
+          "status": "implemented",
+          "description": "按岗位筛选待办任务，支持按任务类型、状态、时间多维度查询。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "post-workbench-f002",
+          "name": "岗位工作任务信息查看详情",
+          "type": "search",
+          "status": "implemented",
+          "description": "查看岗位工作任务的详细信息，包括任务说明、执行标准、关联制度等。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "post-workbench-f003",
+          "name": "岗位工作任务信息处理",
+          "type": "archive",
+          "status": "implemented",
+          "description": "对岗位工作任务进行处理，填写执行情况、上传附件，支持任务流转。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "post-workbench-f004",
+          "name": "岗位工作任务信息批量处理",
+          "type": "task",
+          "status": "implemented",
+          "description": "支持对多条岗位工作任务进行批量处理操作，提升操作效率。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "post-workbench-f005",
+          "name": "岗位工作任务代导出",
+          "type": "archive",
+          "status": "implemented",
+          "description": "支持导出岗位工作任务清单，便于线下汇报与存档。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        }
+      ]
+    },
+    {
+      "code": "team-workbench",
+      "name": "班组工作台",
+      "category": "三基",
+      "owner": "班组",
+      "summary": "按班组展示任务清单、日历、消息、填报和确认入口。",
+      "status": "implemented",
+      "features": [
+        {
+          "code": "team-workbench-f001",
+          "name": "班组工作任务信息查询",
+          "type": "search",
+          "status": "implemented",
+          "description": "按班组筛选待办任务，支持按任务类型、状态、时间多维度查询。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "team-workbench-f002",
+          "name": "班组工作任务信息查看",
+          "type": "search",
+          "status": "implemented",
+          "description": "查看班组工作任务的详细信息与执行进度。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "team-workbench-f003",
+          "name": "二次密码设置与校验",
+          "type": "task",
+          "status": "implemented",
+          "description": "关键操作需进行二次密码校验，确保任务处理的安全性与可追溯性。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "team-workbench-f004",
+          "name": "班组工作任务信息处理",
+          "type": "archive",
+          "status": "implemented",
+          "description": "对班组工作任务进行处理，填写执行情况、上传附件，支持任务流转。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "team-workbench-f005",
+          "name": "班组工作任务信息批量处理",
+          "type": "task",
+          "status": "implemented",
+          "description": "支持对多条班组工作任务进行批量处理操作。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "team-workbench-f006",
+          "name": "班组工作任务导出",
+          "type": "archive",
+          "status": "implemented",
+          "description": "支持导出班组工作任务清单，便于线下汇报与存档。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        }
+      ]
+    },
+    {
+      "code": "calendar-message",
+      "name": "工作日历及消息通知",
+      "category": "支撑",
+      "owner": "综合管理部",
+      "summary": "提供工作日历、消息通知、详情查看和已读确认。",
+      "status": "implemented",
+      "features": [
+        {
+          "code": "calendar-message-f001",
+          "name": "通知消息信息查看详情",
+          "type": "search",
+          "status": "implemented",
+          "description": "查看系统通知消息的完整内容，支持消息已读/未读状态管理。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "calendar-message-f002",
+          "name": "任务列表信息查看详情",
+          "type": "search",
+          "status": "implemented",
+          "description": "查看关联任务的详细信息，支持从消息直接跳转任务处理。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "calendar-message-f003",
+          "name": "日程列表信息查询",
+          "type": "search",
+          "status": "implemented",
+          "description": "按日/周/月视图查询工作日程安排，支持日程与任务关联展示。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "calendar-message-f004",
+          "name": "工作日历信息添加",
+          "type": "form",
+          "status": "implemented",
+          "description": "支持在工作日历中新增日程安排，设置提醒时间与关联任务。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        }
+      ]
+    },
+    {
+      "code": "special-task",
+      "name": "专项任务配置管理",
+      "category": "三基",
+      "owner": "专项任务管理部门",
+      "summary": "管理专项任务配置、下发、反馈、审核和过程跟踪。",
+      "status": "implemented",
+      "features": [
+        {
+          "code": "special-task-f001",
+          "name": "专项任务管理",
+          "type": "task",
+          "status": "implemented",
+          "description": "统一管理专项任务信息，支持任务总览、查询、新增、修改、删除和导出。",
+          "tags": [
+            "任务总览",
+            "查询专项任务",
+            "新增专项任务",
+            "修改专项任务",
+            "删除专项任务",
+            "导出专项任务"
+          ],
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "special-task-f002",
+          "name": "专项任务审核流程配置",
+          "type": "workflow",
+          "status": "implemented",
+          "description": "配置专项任务的审核流程，确保任务下发前经过审批。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        }
+      ]
+    },
+    {
+      "code": "assessment",
+      "name": "考评指标库及考核填报",
+      "category": "体系",
+      "owner": "考核管理部门",
+      "summary": "维护考评指标库、考核模板、填报、评分、排名和结果归档。",
+      "status": "implemented",
+      "features": [
+        {
+          "code": "assessment-f001",
+          "name": "新增考评指标",
+          "type": "form",
+          "status": "implemented",
+          "description": "新增绩效考核指标，定义指标名称、考核标准、目标值、积分规则等。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "assessment-f002",
+          "name": "修改考评指标",
+          "type": "form",
+          "status": "implemented",
+          "description": "支持修改考评指标的配置信息，保留版本记录。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "assessment-f003",
+          "name": "删除考评指标",
+          "type": "delete",
+          "status": "implemented",
+          "description": "支持删除未被引用的考评指标，已引用指标需先解除关联。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "assessment-f004",
+          "name": "导入考评指标",
+          "type": "archive",
+          "status": "implemented",
+          "description": "支持批量导入考评指标，支持Excel模板导入，自动校验数据。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "assessment-f005",
+          "name": "导出考评指标",
+          "type": "archive",
+          "status": "implemented",
+          "description": "支持按筛选条件批量导出考评指标库。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "assessment-f006",
+          "name": "新增考评填报表",
+          "type": "form",
+          "status": "implemented",
+          "description": "创建月度考评填报表，关联考核部门与考评指标。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "assessment-f007",
+          "name": "指标项自动填充",
+          "type": "assessment",
+          "status": "implemented",
+          "description": "根据当前考核部门从指标库自动带出本月需要填报的被考核单位的考核指标、目标值、积分规则等。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "assessment-f008",
+          "name": "修改考评填报表",
+          "type": "form",
+          "status": "implemented",
+          "description": "支持修改考评填报表的配置，调整考核指标与被考核单位。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "assessment-f009",
+          "name": "删除考评填报表",
+          "type": "delete",
+          "status": "implemented",
+          "description": "支持删除未提交的考评填报表，已提交报表不可删除。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "assessment-f010",
+          "name": "KPI指标项考核填报",
+          "type": "assessment",
+          "status": "implemented",
+          "description": "填报被考核单位各指标的完成值、得分、考评说明，支持多人同时在线填报。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "assessment-f011",
+          "name": "新增专业管理考核项",
+          "type": "assessment",
+          "status": "implemented",
+          "description": "填报被考核单位专业管理考核项目、考核结果、考评说明、考核依据等。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "assessment-f012",
+          "name": "导出考核填报表",
+          "type": "archive",
+          "status": "implemented",
+          "description": "支持导出考核填报表数据，便于线下审核与存档。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "assessment-f013",
+          "name": "附件上传",
+          "type": "archive",
+          "status": "implemented",
+          "description": "上传业务指标附件和领导签字审批附件，支持多格式文件上传。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "assessment-f014",
+          "name": "变动记录",
+          "type": "form",
+          "status": "implemented",
+          "description": "查看所有改动过的考核指标项什么时间谁改动过改动前与改动后的内容。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "assessment-f015",
+          "name": "考核填报表提交",
+          "type": "workflow",
+          "status": "implemented",
+          "description": "提交考核填报表，进入审核流程，提交后不可修改。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "assessment-f016",
+          "name": "绩效得分计算",
+          "type": "assessment",
+          "status": "implemented",
+          "description": "系统自动计算被考核部门绩效指标得分与专业管理扣款计算。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "assessment-f017",
+          "name": "查看得分明细",
+          "type": "search",
+          "status": "implemented",
+          "description": "企管部查看得分明细，审核各被考核单位的绩效得分情况。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "assessment-f018",
+          "name": "修改得分明细",
+          "type": "search",
+          "status": "implemented",
+          "description": "企管部修改得分明细，对系统计算结果进行人工调整并记录原因。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "assessment-f019",
+          "name": "下发月度总评",
+          "type": "workflow",
+          "status": "implemented",
+          "description": "下发至各被考核部分月度总评结果，下发后被考核单位可查看。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "assessment-f020",
+          "name": "导出月度总评",
+          "type": "archive",
+          "status": "implemented",
+          "description": "支持导出月度总评结果，便于汇报与存档。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "assessment-f021",
+          "name": "查看绩效汇总",
+          "type": "search",
+          "status": "implemented",
+          "description": "查询当前年每个月的绩效得分和专业管理扣款总分，支持趋势分析。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "assessment-f022",
+          "name": "平均分排名",
+          "type": "search",
+          "status": "implemented",
+          "description": "汇总当前绩效得分并计算月平均得分，按平均分排名展示。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "assessment-f023",
+          "name": "绩效得分明细查看",
+          "type": "search",
+          "status": "implemented",
+          "description": "查看每个被考核部门的绩效得分明细，支持按部门钻取。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "assessment-f024",
+          "name": "专业扣款明细查看",
+          "type": "search",
+          "status": "implemented",
+          "description": "查看每个被考核部门的专业扣款明细，支持按扣款类型筛选。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "assessment-f025",
+          "name": "查询专业扣款明细超过一定数额的扣款项",
+          "type": "search",
+          "status": "implemented",
+          "description": "支持按金额阈值筛选专业扣款明细，定位大额扣款项。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "assessment-f026",
+          "name": "被考核单位查看本月绩效明细",
+          "type": "search",
+          "status": "implemented",
+          "description": "被考核单位查看自己的绩效得分明细和专业扣款明细，支持异议反馈。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        }
+      ]
+    },
+    {
+      "code": "inspection-ledger",
+      "name": "迎检台账",
+      "category": "体系",
+      "owner": "迎检牵头部门",
+      "summary": "管理迎检台账模板、任务、资料、整改、归档和统计。",
+      "status": "implemented",
+      "features": [
+        {
+          "code": "inspection-ledger-f001",
+          "name": "新增迎检台账模版",
+          "type": "form",
+          "status": "implemented",
+          "description": "新增迎检台账模板，定义检查项、评分标准、应上传表单等配置。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "inspection-ledger-f002",
+          "name": "修改迎检台账模版",
+          "type": "form",
+          "status": "implemented",
+          "description": "支持修改迎检台账模板的检查项与评分配置。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "inspection-ledger-f003",
+          "name": "删除迎检台账模版",
+          "type": "delete",
+          "status": "implemented",
+          "description": "支持删除不再使用的迎检台账模板。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "inspection-ledger-f004",
+          "name": "导入迎检台账模版",
+          "type": "archive",
+          "status": "implemented",
+          "description": "支持批量导入迎检台账模板，支持Excel模板导入。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "inspection-ledger-f005",
+          "name": "导出迎检台账模版",
+          "type": "archive",
+          "status": "implemented",
+          "description": "支持导出迎检台账模板，便于共享与备份。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "inspection-ledger-f006",
+          "name": "新增迎检台账",
+          "type": "form",
+          "status": "implemented",
+          "description": "各工区可自行创建迎检台账，基于模板生成具体迎检任务。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "inspection-ledger-f007",
+          "name": "自动生成迎检台账",
+          "type": "ledger",
+          "status": "implemented",
+          "description": "系统每年年初按迎检台账模版中内容自动生成迎检台账。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "inspection-ledger-f008",
+          "name": "删除迎检台账",
+          "type": "delete",
+          "status": "implemented",
+          "description": "支持删除未开始的迎检台账，进行中的台账不可删除。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "inspection-ledger-f009",
+          "name": "新增审核内容",
+          "type": "form",
+          "status": "implemented",
+          "description": "为迎检台账新增审核内容项，定义检查要点与审核标准。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "inspection-ledger-f010",
+          "name": "删除审核内容",
+          "type": "delete",
+          "status": "implemented",
+          "description": "支持删除迎检台账中不再需要的审核内容项。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "inspection-ledger-f011",
+          "name": "录入评分细则",
+          "type": "assessment",
+          "status": "implemented",
+          "description": "录入迎检检查的评分细则，明确各检查项的评分标准与扣分规则。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "inspection-ledger-f012",
+          "name": "录入应上传表单",
+          "type": "workflow",
+          "status": "implemented",
+          "description": "录入迎检需上传的表单清单，明确各检查项需提交的证明材料。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "inspection-ledger-f013",
+          "name": "删除应上传表单",
+          "type": "delete",
+          "status": "implemented",
+          "description": "支持删除迎检台账中不再需要的应上传表单项。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "inspection-ledger-f014",
+          "name": "上传实际表单附件",
+          "type": "workflow",
+          "status": "implemented",
+          "description": "上传迎检实际表单附件，对应应上传表单清单逐项提交。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "inspection-ledger-f015",
+          "name": "导出迎检清单",
+          "type": "archive",
+          "status": "implemented",
+          "description": "支持导出迎检检查清单，便于现场检查使用。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        }
+      ]
+    },
+    {
+      "code": "assistant-tools",
+      "name": "辅助功能",
+      "category": "支撑",
+      "owner": "平台运维",
+      "summary": "提供 AI 任务分解、内容辅助填写等智能辅助能力。",
+      "status": "implemented",
+      "features": [
+        {
+          "code": "assistant-tools-f001",
+          "name": "AI自动分解任务内容，辅助自动填写",
+          "type": "ai",
+          "status": "implemented",
+          "description": "基于AI能力自动分解任务内容，辅助用户快速填写任务信息，提升录入效率。（ai能力调用客户现有能力）",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        },
+        {
+          "code": "assistant-tools-f002",
+          "name": "桌面便贴式客户端",
+          "type": "search",
+          "status": "implemented",
+          "description": "提供桌面便贴式客户端，支持快捷查看待办任务与消息提醒，无需登录浏览器即可操作。",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        }
+      ]
+    },
+    {
+      "code": "others",
+      "name": "其他",
+      "category": "支撑",
+      "owner": "平台运维",
+      "summary": "承载其他预留功能和扩展事项。",
+      "status": "implemented",
+      "features": [
+        {
+          "code": "others-f001",
+          "name": "其他",
+          "type": "task",
+          "status": "implemented",
+          "description": "原有平台相关接口对接",
+          "fields": [
+            "标题",
+            "责任部门",
+            "责任人",
+            "计划时间",
+            "完成状态",
+            "备注"
+          ]
+        }
+      ]
+    }
+  ]
+}
