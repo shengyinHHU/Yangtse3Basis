@@ -16,6 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson2.JSON;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.system.mapper.ThreebaseNavigationMapper;
 
 /**
  * 体系三基融合工作平台通用业务接口。
@@ -45,32 +47,197 @@ public class ThreebaseController
     private static final List<Map<String, Object>> MODULES = loadModules();
     private static final Map<String, List<Map<String, Object>>> RECORDS = new ConcurrentHashMap<>();
 
+    @Autowired(required = false)
+    private ThreebaseNavigationMapper navigationMapper;
+
     @GetMapping("/modules")
     public AjaxResult modules()
     {
-        return AjaxResult.success(Collections.singletonMap("modules", MODULES));
+        return AjaxResult.success(Collections.singletonMap("modules", navigationModules()));
     }
 
     @GetMapping("/modules/{moduleCode}/features")
     public AjaxResult features(@PathVariable String moduleCode)
     {
-        Map<String, Object> module = findModule(moduleCode);
-        List<Map<String, Object>> features = module == null ? Collections.emptyList() : listValue(module.get("features"));
-        return AjaxResult.success(Collections.singletonMap("features", features));
+        return AjaxResult.success(Collections.singletonMap("features", navigationFeatures(moduleCode)));
     }
 
     @GetMapping("/dashboard")
     public AjaxResult dashboard()
     {
-        int featureCount = MODULES.stream().mapToInt(module -> listValue(module.get("features")).size()).sum();
+        List<Map<String, Object>> modules = navigationModules();
+        int featureCount = modules.stream().mapToInt(module -> listValue(module.get("features")).size()).sum();
         Map<String, Object> data = new LinkedHashMap<>();
-        data.put("moduleCount", MODULES.size());
+        data.put("moduleCount", modules.size());
         data.put("featureCount", featureCount);
         data.put("integrationCount", integrationsData().size());
         data.put("recordCount", RECORDS.values().stream().mapToInt(List::size).sum());
-        data.put("todoCount", Math.max(8, MODULES.size()));
+        data.put("todoCount", Math.max(8, modules.size()));
         data.put("sla", "A 级系统 SLA，7x24 监控，可用率不低于 99.9%");
         return AjaxResult.success(data);
+    }
+
+    @GetMapping("/navigation/modules")
+    public AjaxResult navigationModuleList()
+    {
+        return AjaxResult.success(Collections.singletonMap("modules", navigationModules()));
+    }
+
+    @PostMapping("/navigation/modules")
+    public AjaxResult addNavigationModule(@RequestBody Map<String, Object> body)
+    {
+        Map<String, Object> module = normalizeModuleConfig(body);
+        String code = stringValue(module.get("code"));
+        if (code.isBlank() || stringValue(module.get("name")).isBlank())
+        {
+            return AjaxResult.error("模块编码和模块名称不能为空");
+        }
+        try
+        {
+            if (navigationMapper.countModuleCode(code) > 0)
+            {
+                return AjaxResult.error("模块编码已存在");
+            }
+            navigationMapper.insertModule(module);
+            return AjaxResult.success(module);
+        }
+        catch (Exception e)
+        {
+            if (findModule(code) != null)
+            {
+                return AjaxResult.error("模块编码已存在");
+            }
+            MODULES.add(module);
+            return AjaxResult.success(module);
+        }
+    }
+
+    @PutMapping("/navigation/modules")
+    public AjaxResult editNavigationModule(@RequestBody Map<String, Object> body)
+    {
+        Map<String, Object> module = normalizeModuleConfig(body);
+        String code = stringValue(module.get("code"));
+        if (code.isBlank() || stringValue(module.get("name")).isBlank())
+        {
+            return AjaxResult.error("模块编码和模块名称不能为空");
+        }
+        try
+        {
+            navigationMapper.updateModule(module);
+            return AjaxResult.success(module);
+        }
+        catch (Exception e)
+        {
+            Map<String, Object> old = findModule(code);
+            if (old == null)
+            {
+                return AjaxResult.error("模块不存在");
+            }
+            old.putAll(module);
+            old.put("features", listValue(old.get("features")));
+            return AjaxResult.success(old);
+        }
+    }
+
+    @DeleteMapping("/navigation/modules/{code}")
+    public AjaxResult removeNavigationModule(@PathVariable String code)
+    {
+        try
+        {
+            navigationMapper.deleteFeaturesByModule(code);
+            navigationMapper.deleteModule(code);
+        }
+        catch (Exception e)
+        {
+            MODULES.removeIf(module -> Objects.equals(code, module.get("code")));
+        }
+        return AjaxResult.success();
+    }
+
+    @PostMapping("/navigation/features")
+    public AjaxResult addNavigationFeature(@RequestBody Map<String, Object> body)
+    {
+        Map<String, Object> feature = normalizeFeatureConfig(body);
+        if (stringValue(feature.get("moduleCode")).isBlank() || stringValue(feature.get("code")).isBlank() || stringValue(feature.get("name")).isBlank())
+        {
+            return AjaxResult.error("所属模块、功能编码和功能名称不能为空");
+        }
+        try
+        {
+            if (navigationMapper.countFeatureCode(stringValue(feature.get("code"))) > 0)
+            {
+                return AjaxResult.error("功能编码已存在");
+            }
+            navigationMapper.insertFeature(feature);
+            return AjaxResult.success(feature);
+        }
+        catch (Exception e)
+        {
+            Map<String, Object> module = findModule(stringValue(feature.get("moduleCode")));
+            if (module == null)
+            {
+                return AjaxResult.error("所属模块不存在");
+            }
+            listValue(module.get("features")).add(feature);
+            return AjaxResult.success(feature);
+        }
+    }
+
+    @PutMapping("/navigation/features")
+    public AjaxResult editNavigationFeature(@RequestBody Map<String, Object> body)
+    {
+        Map<String, Object> feature = normalizeFeatureConfig(body);
+        String code = stringValue(feature.get("code"));
+        if (code.isBlank() || stringValue(feature.get("name")).isBlank())
+        {
+            return AjaxResult.error("功能编码和功能名称不能为空");
+        }
+        try
+        {
+            navigationMapper.updateFeature(feature);
+            return AjaxResult.success(feature);
+        }
+        catch (Exception e)
+        {
+            Map<String, Object> old = findFeature(findModule(stringValue(feature.get("moduleCode"))), code);
+            if (old == null)
+            {
+                return AjaxResult.error("功能不存在");
+            }
+            old.putAll(feature);
+            return AjaxResult.success(old);
+        }
+    }
+
+    @DeleteMapping("/navigation/features/{code}")
+    public AjaxResult removeNavigationFeature(@PathVariable String code)
+    {
+        try
+        {
+            navigationMapper.deleteFeature(code);
+        }
+        catch (Exception e)
+        {
+            for (Map<String, Object> module : MODULES)
+            {
+                listValue(module.get("features")).removeIf(feature -> Objects.equals(code, feature.get("code")));
+            }
+        }
+        return AjaxResult.success();
+    }
+
+    @PutMapping("/navigation/sort")
+    public AjaxResult sortNavigation(@RequestBody Map<String, Object> body)
+    {
+        for (Map<String, Object> item : listValue(body.get("modules")))
+        {
+            updateNavigationSort("module", stringValue(item.get("code")), intValue(item.get("orderNum")));
+        }
+        for (Map<String, Object> item : listValue(body.get("features")))
+        {
+            updateNavigationSort("feature", stringValue(item.get("code")), intValue(item.get("orderNum")));
+        }
+        return AjaxResult.success();
     }
 
     @GetMapping("/integrations")
@@ -224,6 +391,150 @@ public class ThreebaseController
         if (featureCode != null && !featureCode.isBlank())
         {
             RECORDS.computeIfAbsent(recordKey(moduleCode, featureCode), key -> seedRows(moduleCode, featureCode));
+        }
+    }
+
+    private List<Map<String, Object>> navigationModules()
+    {
+        try
+        {
+            List<Map<String, Object>> modules = navigationMapper == null ? Collections.emptyList() : navigationMapper.selectModules();
+            if (modules != null && modules.isEmpty())
+            {
+                seedNavigationTables();
+                modules = navigationMapper.selectModules();
+            }
+            if (modules != null && !modules.isEmpty())
+            {
+                for (Map<String, Object> module : modules)
+                {
+                    String code = stringValue(module.get("code"));
+                    module.put("features", navigationFeatures(code));
+                }
+                return modules;
+            }
+        }
+        catch (Exception ignored)
+        {
+            // 数据库表未初始化时继续使用 JSON 功能清单，保证演示页面可用。
+        }
+        return MODULES;
+    }
+
+    private void seedNavigationTables()
+    {
+        for (int i = 0; i < MODULES.size(); i++)
+        {
+            Map<String, Object> sourceModule = MODULES.get(i);
+            Map<String, Object> module = normalizeModuleConfig(sourceModule);
+            module.put("orderNum", intValue(sourceModule.getOrDefault("orderNum", i + 1)));
+            if (navigationMapper.countModuleCode(stringValue(module.get("code"))) == 0)
+            {
+                navigationMapper.insertModule(module);
+            }
+            List<Map<String, Object>> features = listValue(sourceModule.get("features"));
+            for (int j = 0; j < features.size(); j++)
+            {
+                Map<String, Object> sourceFeature = new LinkedHashMap<>(features.get(j));
+                sourceFeature.put("moduleCode", sourceModule.get("code"));
+                Map<String, Object> feature = normalizeFeatureConfig(sourceFeature);
+                feature.put("orderNum", intValue(sourceFeature.getOrDefault("orderNum", j + 1)));
+                if (navigationMapper.countFeatureCode(stringValue(feature.get("code"))) == 0)
+                {
+                    navigationMapper.insertFeature(feature);
+                }
+            }
+        }
+    }
+
+    private List<Map<String, Object>> navigationFeatures(String moduleCode)
+    {
+        try
+        {
+            List<Map<String, Object>> features = navigationMapper == null ? Collections.emptyList() : navigationMapper.selectFeatures(moduleCode);
+            if (features != null)
+            {
+                features.forEach(this::decodeFeatureJsonFields);
+                return features;
+            }
+        }
+        catch (Exception ignored)
+        {
+            // 数据库表未初始化时继续使用 JSON 功能清单。
+        }
+        Map<String, Object> module = findModule(moduleCode);
+        return module == null ? Collections.emptyList() : listValue(module.get("features"));
+    }
+
+    private Map<String, Object> normalizeModuleConfig(Map<String, Object> source)
+    {
+        Map<String, Object> module = new LinkedHashMap<>();
+        module.put("code", stringValue(source.get("code")).trim());
+        module.put("name", stringValue(source.get("name")).trim());
+        module.put("category", valueOrDefault(source.get("category"), "基础工作"));
+        module.put("owner", valueOrDefault(source.get("owner"), "待配置"));
+        module.put("summary", valueOrDefault(source.get("summary"), ""));
+        module.put("status", valueOrDefault(source.get("status"), "implemented"));
+        module.put("orderNum", intValue(source.get("orderNum")));
+        module.put("visible", valueOrDefault(source.get("visible"), "0"));
+        module.put("features", new ArrayList<>(listValue(source.get("features"))));
+        return module;
+    }
+
+    private Map<String, Object> normalizeFeatureConfig(Map<String, Object> source)
+    {
+        Map<String, Object> feature = new LinkedHashMap<>();
+        feature.put("moduleCode", stringValue(source.get("moduleCode")).trim());
+        feature.put("code", stringValue(source.get("code")).trim());
+        feature.put("name", stringValue(source.get("name")).trim());
+        feature.put("type", valueOrDefault(source.get("type"), "document"));
+        feature.put("status", valueOrDefault(source.get("status"), "implemented"));
+        feature.put("description", valueOrDefault(source.get("description"), ""));
+        feature.put("tags", JSON.toJSONString(listValueOrStrings(source.get("tags"))));
+        feature.put("fields", JSON.toJSONString(listValueOrStrings(source.get("fields"))));
+        feature.put("orderNum", intValue(source.get("orderNum")));
+        feature.put("visible", valueOrDefault(source.get("visible"), "0"));
+        return feature;
+    }
+
+    private void decodeFeatureJsonFields(Map<String, Object> feature)
+    {
+        feature.put("tags", parseStringList(feature.get("tags")));
+        feature.put("fields", parseStringList(feature.get("fields")));
+    }
+
+    private void updateNavigationSort(String type, String code, Integer orderNum)
+    {
+        if (code.isBlank())
+        {
+            return;
+        }
+        try
+        {
+            if ("module".equals(type))
+            {
+                navigationMapper.updateModuleSort(code, orderNum);
+            }
+            else
+            {
+                navigationMapper.updateFeatureSort(code, orderNum);
+            }
+        }
+        catch (Exception e)
+        {
+            if ("module".equals(type))
+            {
+                Map<String, Object> module = findModule(code);
+                if (module != null) module.put("orderNum", orderNum);
+            }
+            else
+            {
+                for (Map<String, Object> module : MODULES)
+                {
+                    Map<String, Object> feature = findFeature(module, code);
+                    if (feature != null) feature.put("orderNum", orderNum);
+                }
+            }
         }
     }
 
@@ -387,6 +698,64 @@ public class ThreebaseController
             return (List<Map<String, Object>>) list;
         }
         return Collections.emptyList();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<Object> listValueOrStrings(Object value)
+    {
+        if (value instanceof List<?> list)
+        {
+            return (List<Object>) list;
+        }
+        if (value instanceof String text && !text.isBlank())
+        {
+            return Arrays.stream(text.split("[,，\\n]"))
+                    .map(String::trim)
+                    .filter(item -> !item.isBlank())
+                    .map(item -> (Object) item)
+                    .collect(Collectors.toList());
+        }
+        return Collections.emptyList();
+    }
+
+    private static List<Object> parseStringList(Object value)
+    {
+        if (value instanceof List<?> list)
+        {
+            return new ArrayList<>(list);
+        }
+        if (value == null || String.valueOf(value).isBlank())
+        {
+            return Collections.emptyList();
+        }
+        try
+        {
+            return new ArrayList<>(JSON.parseArray(String.valueOf(value), Object.class));
+        }
+        catch (Exception e)
+        {
+            return listValueOrStrings(value);
+        }
+    }
+
+    private static Integer intValue(Object value)
+    {
+        if (value instanceof Number number)
+        {
+            return number.intValue();
+        }
+        if (value == null || String.valueOf(value).isBlank())
+        {
+            return 0;
+        }
+        try
+        {
+            return Integer.valueOf(String.valueOf(value));
+        }
+        catch (NumberFormatException e)
+        {
+            return 0;
+        }
     }
 
     private static String stringValue(Object value)

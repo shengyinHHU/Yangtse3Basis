@@ -8,6 +8,75 @@ export function listThreebaseModules() {
   })
 }
 
+// 查询业务导航配置
+export function listThreebaseNavigationModules() {
+  return request({
+    url: '/system/threebase/navigation/modules',
+    method: 'get'
+  })
+}
+
+// 新增业务导航模块
+export function addThreebaseNavigationModule(data) {
+  return request({
+    url: '/system/threebase/navigation/modules',
+    method: 'post',
+    data
+  })
+}
+
+// 修改业务导航模块
+export function updateThreebaseNavigationModule(data) {
+  return request({
+    url: '/system/threebase/navigation/modules',
+    method: 'put',
+    data
+  })
+}
+
+// 删除业务导航模块
+export function deleteThreebaseNavigationModule(code) {
+  return request({
+    url: `/system/threebase/navigation/modules/${code}`,
+    method: 'delete'
+  })
+}
+
+// 新增业务导航功能
+export function addThreebaseNavigationFeature(data) {
+  return request({
+    url: '/system/threebase/navigation/features',
+    method: 'post',
+    data
+  })
+}
+
+// 修改业务导航功能
+export function updateThreebaseNavigationFeature(data) {
+  return request({
+    url: '/system/threebase/navigation/features',
+    method: 'put',
+    data
+  })
+}
+
+// 删除业务导航功能
+export function deleteThreebaseNavigationFeature(code) {
+  return request({
+    url: `/system/threebase/navigation/features/${code}`,
+    method: 'delete'
+  })
+}
+
+// 保存业务导航排序
+export function updateThreebaseNavigationSort(data) {
+  return request({
+    url: '/system/threebase/navigation/sort',
+    method: 'put',
+    data
+  })
+}
+
 // 查询模块下的功能清单
 export function listThreebaseFeatures(moduleCode) {
   return request({

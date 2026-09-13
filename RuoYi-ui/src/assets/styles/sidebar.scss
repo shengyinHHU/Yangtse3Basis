@@ -311,6 +311,8 @@
   >.el-menu--popup {
     max-height: 100vh;
     overflow-y: auto;
+    scrollbar-color: #99a9bf #d3dce6;
+    scrollbar-width: thin;
 
     &::-webkit-scrollbar-track-piece {
       background: #d3dce6;

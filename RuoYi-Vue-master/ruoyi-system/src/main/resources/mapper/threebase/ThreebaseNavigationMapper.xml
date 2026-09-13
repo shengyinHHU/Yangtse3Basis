@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ThreebaseNavigationMapper">
+
+    <select id="selectModules" resultType="java.util.LinkedHashMap">
+        select
+            module_id as moduleId,
+            code,
+            name,
+            category,
+            owner,
+            summary,
+            status,
+            order_num as orderNum,
+            visible,
+            create_time as createTime,
+            update_time as updateTime
+        from threebase_module
+        where visible = '0'
+        order by order_num asc, module_id asc
+    </select>
+
+    <select id="selectFeatures" resultType="java.util.LinkedHashMap">
+        select
+            feature_id as featureId,
+            module_code as moduleCode,
+            code,
+            name,
+            type,
+            status,
+            description,
+            tags,
+            fields,
+            order_num as orderNum,
+            visible,
+            create_time as createTime,
+            update_time as updateTime
+        from threebase_feature
+        where module_code = #{moduleCode}
+          and visible = '0'
+        order by order_num asc, feature_id asc
+    </select>
+
+    <select id="countModuleCode" resultType="int">
+        select count(1) from threebase_module where code = #{code}
+    </select>
+
+    <select id="countFeatureCode" resultType="int">
+        select count(1) from threebase_feature where code = #{code}
+    </select>
+
+    <insert id="insertModule" parameterType="java.util.Map">
+        insert into threebase_module(code, name, category, owner, summary, status, order_num, visible, create_time, update_time)
+        values(#{code}, #{name}, #{category}, #{owner}, #{summary}, #{status}, #{orderNum}, #{visible}, sysdate(), sysdate())
+    </insert>
+
+    <update id="updateModule" parameterType="java.util.Map">
+        update threebase_module
+        set name = #{name},
+            category = #{category},
+            owner = #{owner},
+            summary = #{summary},
+            status = #{status},
+            order_num = #{orderNum},
+            visible = #{visible},
+            update_time = sysdate()
+        where code = #{code}
+    </update>
+
+    <delete id="deleteModule">
+        delete from threebase_module where code = #{code}
+    </delete>
+
+    <delete id="deleteFeaturesByModule">
+        delete from threebase_feature where module_code = #{moduleCode}
+    </delete>
+
+    <insert id="insertFeature" parameterType="java.util.Map">
+        insert into threebase_feature(module_code, code, name, type, status, description, tags, fields, order_num, visible, create_time, update_time)
+        values(#{moduleCode}, #{code}, #{name}, #{type}, #{status}, #{description}, #{tags}, #{fields}, #{orderNum}, #{visible}, sysdate(), sysdate())
+    </insert>
+
+    <update id="updateFeature" parameterType="java.util.Map">
+        update threebase_feature
+        set module_code = #{moduleCode},
+            name = #{name},
+            type = #{type},
+            status = #{status},
+            description = #{description},
+            tags = #{tags},
+            fields = #{fields},
+            order_num = #{orderNum},
+            visible = #{visible},
+            update_time = sysdate()
+        where code = #{code}
+    </update>
+
+    <delete id="deleteFeature">
+        delete from threebase_feature where code = #{code}
+    </delete>
+
+    <update id="updateModuleSort">
+        update threebase_module set order_num = #{orderNum}, update_time = sysdate() where code = #{code}
+    </update>
+
+    <update id="updateFeatureSort">
+        update threebase_feature set order_num = #{orderNum}, update_time = sysdate() where code = #{code}
+    </update>
+</mapper>
