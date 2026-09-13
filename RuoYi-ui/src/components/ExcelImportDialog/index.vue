@@ -5,7 +5,7 @@
       <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
       <template #tip>
         <div class="el-upload__tip text-center">
-          <div class="el-upload__tip">
+          <div v-if="showUpdateSupport" class="el-upload__tip">
             <el-checkbox v-model="updateSupport"> {{ updateSupportLabel }} </el-checkbox>
           </div>
           <span>仅允许导入xls、xlsx格式文件。</span>
@@ -57,6 +57,11 @@ const props = defineProps({
   updateSupportLabel: {
     type: String,
     default: '是否更新已经存在的数据'
+  },
+  // 是否显示覆盖更新选项
+  showUpdateSupport: {
+    type: Boolean,
+    default: true
   }
 })
 

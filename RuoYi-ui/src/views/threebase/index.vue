@@ -100,7 +100,46 @@
               <el-tag type="success" effect="plain">接口已接入</el-tag>
             </div>
 
-            <template v-if="isSystemUserFeature">
+            <template v-if="isBtTaskInfoFeature">
+              <div class="record-toolbar task-info-toolbar">
+                <el-input v-model="btTaskInfoQuery.taskName" clearable placeholder="请输入任务名称" @keyup.enter="handleBtTaskInfoQuery" />
+                <el-input v-model="btTaskInfoQuery.businessCategory" clearable placeholder="请输入业务类别" @keyup.enter="handleBtTaskInfoQuery" />
+                <el-input v-model="btTaskInfoQuery.processGroup" clearable placeholder="请输入流程组" @keyup.enter="handleBtTaskInfoQuery" />
+                <el-input v-model="btTaskInfoQuery.executionPost" clearable placeholder="请输入执行岗位" @keyup.enter="handleBtTaskInfoQuery" />
+                <el-button type="primary" :icon="Search" @click="handleBtTaskInfoQuery">查询</el-button>
+                <el-button @click="resetBtTaskInfoQuery">重置</el-button>
+                <el-button :icon="Plus" @click="openBtTaskInfoDialog()">新增</el-button>
+                <el-button :icon="Upload" @click="openBtTaskInfoImport">导入 Excel</el-button>
+              </div>
+
+              <el-table v-loading="btTaskInfoLoading" :data="btTaskInfoList" border class="record-table" empty-text="暂无工作任务数据">
+                <el-table-column prop="taskInfoId" label="编号" width="88" align="center" />
+                <el-table-column
+                  v-for="column in btTaskInfoTableColumns"
+                  :key="column.prop"
+                  :prop="column.prop"
+                  :label="column.label"
+                  :min-width="column.width"
+                  show-overflow-tooltip
+                />
+                <el-table-column label="操作" width="130" fixed="right">
+                  <template #default="scope">
+                    <el-button link type="primary" @click="openBtTaskInfoDialog(scope.row)">编辑</el-button>
+                    <el-button link type="danger" @click="removeBtTaskInfo(scope.row)">删除</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+
+              <pagination
+                v-show="btTaskInfoTotal > 0"
+                :total="btTaskInfoTotal"
+                v-model:page="btTaskInfoQuery.pageNum"
+                v-model:limit="btTaskInfoQuery.pageSize"
+                @pagination="loadBtTaskInfo"
+              />
+            </template>
+
+            <template v-else-if="isSystemUserFeature">
               <div class="record-toolbar user-toolbar">
                 <el-input v-model="systemUserQuery.userName" clearable placeholder="请输入用户名称" @keyup.enter="loadSystemUsers" />
                 <el-input v-model="systemUserQuery.phonenumber" clearable placeholder="请输入手机号码" @keyup.enter="loadSystemUsers" />
@@ -415,6 +454,40 @@
         </div>
       </main>
     </section>
+
+    <el-dialog v-model="btTaskInfoDialog.visible" :title="btTaskInfoDialog.title" width="920px" append-to-body>
+      <el-form ref="btTaskInfoFormRef" :model="btTaskInfoForm" :rules="btTaskInfoRules" label-width="132px">
+        <el-row :gutter="14">
+          <el-col v-for="field in btTaskInfoFields" :key="field.prop" :span="field.span">
+            <el-form-item :label="field.label" :prop="field.prop === 'taskName' ? field.prop : undefined">
+              <el-input
+                v-model="btTaskInfoForm[field.prop]"
+                :type="field.type || 'text'"
+                :rows="field.rows"
+                :maxlength="field.maxlength"
+                show-word-limit
+                :placeholder="`请输入${field.label}`"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <template #footer>
+        <el-button @click="btTaskInfoDialog.visible = false">取消</el-button>
+        <el-button type="primary" @click="saveBtTaskInfo">保存</el-button>
+      </template>
+    </el-dialog>
+
+    <excel-import-dialog
+      ref="btTaskInfoImportRef"
+      title="工作任务导入"
+      action="/system/threebase/taskInfo/importData"
+      template-action="/system/threebase/taskInfo/importTemplate"
+      template-file-name="bt_task_info_template"
+      update-support-label="是否更新已经存在的工作任务数据"
+      :show-update-support="false"
+      @success="loadBtTaskInfo"
+    />
 
     <el-dialog v-model="recordDialog.visible" :title="recordDialog.title" width="620px" append-to-body>
       <el-form :model="recordForm" label-width="92px">
@@ -780,18 +853,23 @@ import {
 import {
   actionThreebaseRecord,
   addThreebaseRecord,
+  addBtTaskInfo,
   addThreebaseNavigationFeature,
   addThreebaseNavigationModule,
+  delBtTaskInfo,
   deleteThreebaseRecord,
   deleteThreebaseNavigationFeature,
   deleteThreebaseNavigationModule,
+  getBtTaskInfo,
   getThreebaseDashboard,
+  listBtTaskInfo,
   listThreebaseNavigationModules,
   listThreebaseFeatures,
   listThreebaseIntegrations,
   listThreebaseModules,
   listThreebaseRecords,
   listThreebaseTodos,
+  updateBtTaskInfo,
   updateThreebaseNavigationFeature,
   updateThreebaseNavigationModule,
   updateThreebaseNavigationSort,
@@ -801,6 +879,7 @@ import { addUser, changeUserStatus, delUser, getUser, listUser, resetUserPwd, up
 import { addRole, changeRoleStatus, delRole, getRole, listRole, updateRole } from '@/api/system/role'
 import { addMenu, delMenu, getMenu, listMenu, roleMenuTreeselect, treeselect as menuTreeselect, updateMenu, updateMenuSort } from '@/api/system/menu'
 import { handleTree } from '@/utils/ruoyi'
+import ExcelImportDialog from '@/components/ExcelImportDialog'
 import fallbackData from './data/modules.json'
 
 const route = useRoute()
@@ -843,6 +922,11 @@ const businessNavigationModules = ref([])
 const businessNavigationLoading = ref(false)
 const businessNavigationFormRef = ref()
 const businessNavigationOriginalOrders = ref({})
+const btTaskInfoList = ref([])
+const btTaskInfoTotal = ref(0)
+const btTaskInfoLoading = ref(false)
+const btTaskInfoFormRef = ref()
+const btTaskInfoImportRef = ref()
 const apiAvailable = ref(false)
 const query = ref({ keyword: '', status: '' })
 const systemUserQuery = ref({
@@ -872,6 +956,17 @@ const systemMenuForm = ref(defaultSystemMenuForm())
 const businessNavigationQuery = ref({ keyword: '' })
 const businessNavigationDialog = ref({ visible: false, title: '新增业务模块' })
 const businessNavigationForm = ref(defaultBusinessNavigationForm())
+const btTaskInfoQuery = ref({
+  pageNum: 1,
+  pageSize: 10,
+  businessCategory: '',
+  processGroup: '',
+  taskName: '',
+  threeBasisRequirement: '',
+  executionPost: ''
+})
+const btTaskInfoDialog = ref({ visible: false, title: '新增工作任务' })
+const btTaskInfoForm = ref(defaultBtTaskInfoForm())
 const systemUserRules = {
   userName: [
     { required: true, message: '用户名称不能为空', trigger: 'blur' },
@@ -932,6 +1027,12 @@ const businessNavigationRules = {
   ],
   orderNum: [
     { required: true, message: '显示排序不能为空', trigger: 'blur' }
+  ]
+}
+const btTaskInfoRules = {
+  taskName: [
+    { required: true, message: '任务名称不能为空', trigger: 'blur' },
+    { max: 500, message: '任务名称不能超过 500 个字符', trigger: 'blur' }
   ]
 }
 const recordDialog = ref({ visible: false, title: '新增记录' })
@@ -1117,6 +1218,7 @@ const isSystemUserFeature = computed(() => activeFeatureCode.value === 'user-per
 const isSystemRoleFeature = computed(() => activeFeatureCode.value === 'user-permission-role')
 const isSystemMenuFeature = computed(() => activeFeatureCode.value === 'system-menu-management')
 const isBusinessNavigationFeature = computed(() => activeFeatureCode.value === 'business-navigation-management')
+const isBtTaskInfoFeature = computed(() => activeCode.value === 'work-task' && activeFeatureCode.value === 'work-task-f001')
 const activeNativeSystemComponent = computed(() => nativeSystemComponents[activeFeatureCode.value])
 
 const apiState = computed(() => {
@@ -1242,6 +1344,34 @@ function defaultSystemMenuForm() {
   }
 }
 
+function defaultBtTaskInfoForm() {
+  return {
+    taskInfoId: undefined,
+    businessCategory: '',
+    processGroup: '',
+    basicProcess: '',
+    specialProcess: '',
+    taskName: '',
+    standardManual: '',
+    threeBasisRequirement: '',
+    integratedSystemElement: '',
+    hseSystemElement: '',
+    executionPost: '',
+    personnel: '',
+    taskPermission: '',
+    workBasisStandard: '',
+    workCycleFrequency: '',
+    triggerTime: '',
+    requiredFinishTime: '',
+    standardForm: '',
+    informationSystem: '',
+    organizationSetting: '',
+    dl1FunctionModule: '',
+    dl2BusinessCategory: '',
+    dl3BasicBusiness: ''
+  }
+}
+
 function defaultBusinessNavigationForm() {
   return {
     navLevel: 'module',
@@ -1258,6 +1388,37 @@ function defaultBusinessNavigationForm() {
     visible: '0'
   }
 }
+
+const btTaskInfoFields = [
+  { prop: 'businessCategory', label: '业务类别', span: 12, maxlength: 50 },
+  { prop: 'processGroup', label: '流程组', span: 12, maxlength: 100 },
+  { prop: 'basicProcess', label: '基本流程', span: 12, maxlength: 200 },
+  { prop: 'specialProcess', label: '专项流程', span: 12, maxlength: 100 },
+  { prop: 'taskName', label: '任务名称', span: 24, maxlength: 500, type: 'textarea', rows: 2 },
+  { prop: 'standardManual', label: '三标手册', span: 12, maxlength: 300, type: 'textarea', rows: 2 },
+  { prop: 'threeBasisRequirement', label: '三基要求', span: 12, maxlength: 300, type: 'textarea', rows: 2 },
+  { prop: 'integratedSystemElement', label: '一体化体系要素', span: 12, maxlength: 300, type: 'textarea', rows: 2 },
+  { prop: 'hseSystemElement', label: 'HSE体系要素', span: 12, maxlength: 200, type: 'textarea', rows: 2 },
+  { prop: 'executionPost', label: '执行岗位', span: 12, maxlength: 300 },
+  { prop: 'personnel', label: '人员', span: 12, maxlength: 200 },
+  { prop: 'taskPermission', label: '任务权限', span: 12, maxlength: 300 },
+  { prop: 'workCycleFrequency', label: '工作周期/频次', span: 12, maxlength: 50 },
+  { prop: 'triggerTime', label: '触发时间', span: 12, maxlength: 200 },
+  { prop: 'requiredFinishTime', label: '规定完成时间', span: 12, maxlength: 200 },
+  { prop: 'standardForm', label: '标准化表单', span: 12, maxlength: 500, type: 'textarea', rows: 2 },
+  { prop: 'informationSystem', label: '信息系统', span: 12, maxlength: 200 },
+  { prop: 'organizationSetting', label: '机构设置', span: 24, maxlength: 500, type: 'textarea', rows: 2 },
+  { prop: 'workBasisStandard', label: '工作依据及标准', span: 24, maxlength: 4000, type: 'textarea', rows: 4 },
+  { prop: 'dl1FunctionModule', label: '职能模块DL1（52项）', span: 12, maxlength: 300, type: 'textarea', rows: 2 },
+  { prop: 'dl2BusinessCategory', label: '业务类别DL2（128项）', span: 12, maxlength: 300, type: 'textarea', rows: 2 },
+  { prop: 'dl3BasicBusiness', label: '基本业务DL3（363项）', span: 24, maxlength: 500, type: 'textarea', rows: 2 }
+]
+
+const btTaskInfoTableColumns = btTaskInfoFields.map(field => ({
+  prop: field.prop,
+  label: field.label,
+  width: field.prop === 'taskName' || field.prop === 'workBasisStandard' ? 320 : 180
+}))
 
 async function loadAll() {
   if (!getToken()) {
@@ -1364,6 +1525,7 @@ function selectFeature(feature) {
   query.value.status = ''
   systemUserQuery.value.pageNum = 1
   systemRoleQuery.value.pageNum = 1
+  btTaskInfoQuery.value.pageNum = 1
   systemMenuQuery.value.menuName = ''
   systemMenuQuery.value.status = ''
   businessNavigationQuery.value.keyword = ''
@@ -1400,6 +1562,10 @@ async function loadRecords() {
     await loadBusinessNavigation()
     return
   }
+  if (isBtTaskInfoFeature.value) {
+    await loadBtTaskInfo()
+    return
+  }
   recordLoading.value = true
   try {
     const response = await listThreebaseRecords({
@@ -1417,6 +1583,100 @@ async function loadRecords() {
   } finally {
     recordLoading.value = false
   }
+}
+
+async function loadBtTaskInfo() {
+  btTaskInfoLoading.value = true
+  try {
+    const response = await listBtTaskInfo({
+      pageNum: btTaskInfoQuery.value.pageNum,
+      pageSize: btTaskInfoQuery.value.pageSize,
+      businessCategory: btTaskInfoQuery.value.businessCategory || undefined,
+      processGroup: btTaskInfoQuery.value.processGroup || undefined,
+      taskName: btTaskInfoQuery.value.taskName || undefined,
+      threeBasisRequirement: btTaskInfoQuery.value.threeBasisRequirement || undefined,
+      executionPost: btTaskInfoQuery.value.executionPost || undefined
+    })
+    btTaskInfoList.value = response.rows || []
+    btTaskInfoTotal.value = Number(response.total || 0)
+  } catch (error) {
+    btTaskInfoList.value = []
+    btTaskInfoTotal.value = 0
+    ElMessage.warning('工作任务管理接口暂不可用，请确认后端服务与权限配置。')
+  } finally {
+    btTaskInfoLoading.value = false
+  }
+}
+
+function handleBtTaskInfoQuery() {
+  btTaskInfoQuery.value.pageNum = 1
+  loadBtTaskInfo()
+}
+
+function resetBtTaskInfoQuery() {
+  btTaskInfoQuery.value = {
+    pageNum: 1,
+    pageSize: btTaskInfoQuery.value.pageSize,
+    businessCategory: '',
+    processGroup: '',
+    taskName: '',
+    threeBasisRequirement: '',
+    executionPost: ''
+  }
+  loadBtTaskInfo()
+}
+
+async function openBtTaskInfoDialog(row) {
+  btTaskInfoForm.value = defaultBtTaskInfoForm()
+  btTaskInfoFormRef.value?.clearValidate?.()
+  if (!row) {
+    btTaskInfoDialog.value = { visible: true, title: '新增工作任务' }
+    return
+  }
+  try {
+    const response = await getBtTaskInfo(row.taskInfoId)
+    btTaskInfoForm.value = {
+      ...defaultBtTaskInfoForm(),
+      ...(response.data || row)
+    }
+    btTaskInfoDialog.value = { visible: true, title: '编辑工作任务' }
+  } catch (error) {
+    ElMessage.warning('工作任务详情接口暂不可用。')
+  }
+}
+
+function openBtTaskInfoImport() {
+  btTaskInfoImportRef.value?.open?.()
+}
+
+async function saveBtTaskInfo() {
+  if (!btTaskInfoFormRef.value) return
+  await btTaskInfoFormRef.value.validate(async valid => {
+    if (!valid) return
+    const payload = { ...btTaskInfoForm.value }
+    if (payload.taskInfoId) {
+      await updateBtTaskInfo(payload)
+      ElMessage.success('工作任务已更新')
+    } else {
+      await addBtTaskInfo(payload)
+      ElMessage.success('工作任务已新增')
+    }
+    btTaskInfoDialog.value.visible = false
+    await loadBtTaskInfo()
+  })
+}
+
+function removeBtTaskInfo(row) {
+  ElMessageBox.confirm(`确认删除工作任务“${row.taskName}”吗？`, '系统提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(() => {
+    return delBtTaskInfo(row.taskInfoId)
+  }).then(() => {
+    ElMessage.success('工作任务已删除')
+    loadBtTaskInfo()
+  }).catch(() => {})
 }
 
 async function loadSystemUsers() {

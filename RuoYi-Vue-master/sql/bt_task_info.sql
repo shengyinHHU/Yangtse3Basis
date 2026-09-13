@@ -1,0 +1,35 @@
+-- 任务要素数据表
+-- 来源：附件3_任务要素数据表.xlsx，sheet1，第3行为表头，第4行起为数据。
+
+create table if not exists bt_task_info (
+  task_info_id bigint(20) not null auto_increment comment '任务要素ID',
+  business_category varchar(50) default null comment '业务类别',
+  process_group varchar(100) default null comment '流程组',
+  basic_process varchar(200) default null comment '基本流程',
+  special_process varchar(100) default null comment '专项流程',
+  task_name varchar(500) default null comment '任务名称',
+  standard_manual varchar(300) default null comment '三标手册',
+  three_basis_requirement varchar(300) default null comment '三基要求',
+  integrated_system_element varchar(300) default null comment '一体化体系要素',
+  hse_system_element varchar(200) default null comment 'HSE体系要素',
+  execution_post varchar(300) default null comment '执行岗位',
+  personnel varchar(200) default null comment '人员',
+  task_permission varchar(300) default null comment '任务权限',
+  work_basis_standard text comment '工作依据及标准',
+  work_cycle_frequency varchar(50) default null comment '工作周期/频次',
+  trigger_time varchar(200) default null comment '触发时间',
+  required_finish_time varchar(200) default null comment '规定完成时间',
+  standard_form varchar(500) default null comment '标准化表单',
+  information_system varchar(200) default null comment '信息系统',
+  organization_setting varchar(500) default null comment '机构设置',
+  dl1_function_module varchar(300) default null comment '职能模块DL1（52项）',
+  dl2_business_category varchar(300) default null comment '业务类别DL2（128项）',
+  dl3_basic_business varchar(500) default null comment '基本业务DL3（363项）',
+  create_time datetime default null comment '创建时间',
+  update_time datetime default null comment '更新时间',
+  primary key (task_info_id),
+  key idx_bt_task_info_business_category (business_category),
+  key idx_bt_task_info_process_group (process_group),
+  key idx_bt_task_info_task_name (task_name),
+  key idx_bt_task_info_execution_post (execution_post)
+) engine=innodb default charset=utf8mb4 comment='任务要素数据表';

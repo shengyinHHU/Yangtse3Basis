@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.BtTaskInfoMapper">
+
+    <resultMap type="BtTaskInfo" id="BtTaskInfoResult">
+        <id     property="taskInfoId"              column="task_info_id"             />
+        <result property="businessCategory"        column="business_category"        />
+        <result property="processGroup"            column="process_group"            />
+        <result property="basicProcess"            column="basic_process"            />
+        <result property="specialProcess"          column="special_process"          />
+        <result property="taskName"                column="task_name"                />
+        <result property="standardManual"          column="standard_manual"          />
+        <result property="threeBasisRequirement"   column="three_basis_requirement"  />
+        <result property="integratedSystemElement" column="integrated_system_element"/>
+        <result property="hseSystemElement"        column="hse_system_element"       />
+        <result property="executionPost"           column="execution_post"           />
+        <result property="personnel"               column="personnel"                />
+        <result property="taskPermission"          column="task_permission"          />
+        <result property="workBasisStandard"       column="work_basis_standard"      />
+        <result property="workCycleFrequency"      column="work_cycle_frequency"     />
+        <result property="triggerTime"             column="trigger_time"             />
+        <result property="requiredFinishTime"      column="required_finish_time"     />
+        <result property="standardForm"            column="standard_form"            />
+        <result property="informationSystem"       column="information_system"       />
+        <result property="organizationSetting"     column="organization_setting"     />
+        <result property="dl1FunctionModule"       column="dl1_function_module"      />
+        <result property="dl2BusinessCategory"     column="dl2_business_category"    />
+        <result property="dl3BasicBusiness"        column="dl3_basic_business"       />
+        <result property="createTime"              column="create_time"              />
+        <result property="updateTime"              column="update_time"              />
+    </resultMap>
+
+    <sql id="selectBtTaskInfoVo">
+        select task_info_id, business_category, process_group, basic_process, special_process,
+               task_name, standard_manual, three_basis_requirement, integrated_system_element,
+               hse_system_element, execution_post, personnel, task_permission, work_basis_standard,
+               work_cycle_frequency, trigger_time, required_finish_time, standard_form,
+               information_system, organization_setting, dl1_function_module, dl2_business_category,
+               dl3_basic_business, create_time, update_time
+        from bt_task_info
+    </sql>
+
+    <select id="selectBtTaskInfoList" parameterType="BtTaskInfo" resultMap="BtTaskInfoResult">
+        <include refid="selectBtTaskInfoVo"/>
+        <where>
+            <if test="businessCategory != null and businessCategory != ''">
+                and business_category like concat('%', #{businessCategory}, '%')
+            </if>
+            <if test="processGroup != null and processGroup != ''">
+                and process_group like concat('%', #{processGroup}, '%')
+            </if>
+            <if test="taskName != null and taskName != ''">
+                and task_name like concat('%', #{taskName}, '%')
+            </if>
+            <if test="threeBasisRequirement != null and threeBasisRequirement != ''">
+                and three_basis_requirement like concat('%', #{threeBasisRequirement}, '%')
+            </if>
+            <if test="executionPost != null and executionPost != ''">
+                and execution_post like concat('%', #{executionPost}, '%')
+            </if>
+        </where>
+        order by task_info_id desc
+    </select>
+
+    <select id="selectBtTaskInfoById" parameterType="Long" resultMap="BtTaskInfoResult">
+        <include refid="selectBtTaskInfoVo"/>
+        where task_info_id = #{taskInfoId}
+    </select>
+
+    <insert id="insertBtTaskInfo" parameterType="BtTaskInfo" useGeneratedKeys="true" keyProperty="taskInfoId">
+        insert into bt_task_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="businessCategory != null">business_category,</if>
+            <if test="processGroup != null">process_group,</if>
+            <if test="basicProcess != null">basic_process,</if>
+            <if test="specialProcess != null">special_process,</if>
+            <if test="taskName != null and taskName != ''">task_name,</if>
+            <if test="standardManual != null">standard_manual,</if>
+            <if test="threeBasisRequirement != null">three_basis_requirement,</if>
+            <if test="integratedSystemElement != null">integrated_system_element,</if>
+            <if test="hseSystemElement != null">hse_system_element,</if>
+            <if test="executionPost != null">execution_post,</if>
+            <if test="personnel != null">personnel,</if>
+            <if test="taskPermission != null">task_permission,</if>
+            <if test="workBasisStandard != null">work_basis_standard,</if>
+            <if test="workCycleFrequency != null">work_cycle_frequency,</if>
+            <if test="triggerTime != null">trigger_time,</if>
+            <if test="requiredFinishTime != null">required_finish_time,</if>
+            <if test="standardForm != null">standard_form,</if>
+            <if test="informationSystem != null">information_system,</if>
+            <if test="organizationSetting != null">organization_setting,</if>
+            <if test="dl1FunctionModule != null">dl1_function_module,</if>
+            <if test="dl2BusinessCategory != null">dl2_business_category,</if>
+            <if test="dl3BasicBusiness != null">dl3_basic_business,</if>
+            create_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="businessCategory != null">#{businessCategory},</if>
+            <if test="processGroup != null">#{processGroup},</if>
+            <if test="basicProcess != null">#{basicProcess},</if>
+            <if test="specialProcess != null">#{specialProcess},</if>
+            <if test="taskName != null and taskName != ''">#{taskName},</if>
+            <if test="standardManual != null">#{standardManual},</if>
+            <if test="threeBasisRequirement != null">#{threeBasisRequirement},</if>
+            <if test="integratedSystemElement != null">#{integratedSystemElement},</if>
+            <if test="hseSystemElement != null">#{hseSystemElement},</if>
+            <if test="executionPost != null">#{executionPost},</if>
+            <if test="personnel != null">#{personnel},</if>
+            <if test="taskPermission != null">#{taskPermission},</if>
+            <if test="workBasisStandard != null">#{workBasisStandard},</if>
+            <if test="workCycleFrequency != null">#{workCycleFrequency},</if>
+            <if test="triggerTime != null">#{triggerTime},</if>
+            <if test="requiredFinishTime != null">#{requiredFinishTime},</if>
+            <if test="standardForm != null">#{standardForm},</if>
+            <if test="informationSystem != null">#{informationSystem},</if>
+            <if test="organizationSetting != null">#{organizationSetting},</if>
+            <if test="dl1FunctionModule != null">#{dl1FunctionModule},</if>
+            <if test="dl2BusinessCategory != null">#{dl2BusinessCategory},</if>
+            <if test="dl3BasicBusiness != null">#{dl3BasicBusiness},</if>
+            sysdate()
+        </trim>
+    </insert>
+
+    <insert id="batchInsertBtTaskInfo" parameterType="java.util.List">
+        insert into bt_task_info (
+            business_category, process_group, basic_process, special_process, task_name,
+            standard_manual, three_basis_requirement, integrated_system_element, hse_system_element,
+            execution_post, personnel, task_permission, work_basis_standard, work_cycle_frequency,
+            trigger_time, required_finish_time, standard_form, information_system, organization_setting,
+            dl1_function_module, dl2_business_category, dl3_basic_business, create_time
+        ) values
+        <foreach collection="list" item="item" separator=",">
+            (
+                #{item.businessCategory}, #{item.processGroup}, #{item.basicProcess}, #{item.specialProcess}, #{item.taskName},
+                #{item.standardManual}, #{item.threeBasisRequirement}, #{item.integratedSystemElement}, #{item.hseSystemElement},
+                #{item.executionPost}, #{item.personnel}, #{item.taskPermission}, #{item.workBasisStandard}, #{item.workCycleFrequency},
+                #{item.triggerTime}, #{item.requiredFinishTime}, #{item.standardForm}, #{item.informationSystem}, #{item.organizationSetting},
+                #{item.dl1FunctionModule}, #{item.dl2BusinessCategory}, #{item.dl3BasicBusiness}, sysdate()
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateBtTaskInfo" parameterType="BtTaskInfo">
+        update bt_task_info
+        <set>
+            <if test="businessCategory != null">business_category = #{businessCategory},</if>
+            <if test="processGroup != null">process_group = #{processGroup},</if>
+            <if test="basicProcess != null">basic_process = #{basicProcess},</if>
+            <if test="specialProcess != null">special_process = #{specialProcess},</if>
+            <if test="taskName != null and taskName != ''">task_name = #{taskName},</if>
+            <if test="standardManual != null">standard_manual = #{standardManual},</if>
+            <if test="threeBasisRequirement != null">three_basis_requirement = #{threeBasisRequirement},</if>
+            <if test="integratedSystemElement != null">integrated_system_element = #{integratedSystemElement},</if>
+            <if test="hseSystemElement != null">hse_system_element = #{hseSystemElement},</if>
+            <if test="executionPost != null">execution_post = #{executionPost},</if>
+            <if test="personnel != null">personnel = #{personnel},</if>
+            <if test="taskPermission != null">task_permission = #{taskPermission},</if>
+            <if test="workBasisStandard != null">work_basis_standard = #{workBasisStandard},</if>
+            <if test="workCycleFrequency != null">work_cycle_frequency = #{workCycleFrequency},</if>
+            <if test="triggerTime != null">trigger_time = #{triggerTime},</if>
+            <if test="requiredFinishTime != null">required_finish_time = #{requiredFinishTime},</if>
+            <if test="standardForm != null">standard_form = #{standardForm},</if>
+            <if test="informationSystem != null">information_system = #{informationSystem},</if>
+            <if test="organizationSetting != null">organization_setting = #{organizationSetting},</if>
+            <if test="dl1FunctionModule != null">dl1_function_module = #{dl1FunctionModule},</if>
+            <if test="dl2BusinessCategory != null">dl2_business_category = #{dl2BusinessCategory},</if>
+            <if test="dl3BasicBusiness != null">dl3_basic_business = #{dl3BasicBusiness},</if>
+            update_time = sysdate()
+        </set>
+        where task_info_id = #{taskInfoId}
+    </update>
+
+    <delete id="deleteBtTaskInfoById" parameterType="Long">
+        delete from bt_task_info where task_info_id = #{taskInfoId}
+    </delete>
+
+    <delete id="deleteBtTaskInfoByIds" parameterType="Long">
+        delete from bt_task_info where task_info_id in
+        <foreach collection="array" item="taskInfoId" open="(" separator="," close=")">
+            #{taskInfoId}
+        </foreach>
+    </delete>
+</mapper>

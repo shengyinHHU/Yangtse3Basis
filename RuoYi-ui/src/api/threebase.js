@@ -158,3 +158,55 @@ export function listThreebaseTodos() {
     method: 'get'
   })
 }
+
+// 查询工作任务管理列表
+export function listBtTaskInfo(params) {
+  return request({
+    url: '/system/threebase/taskInfo/list',
+    method: 'get',
+    params
+  })
+}
+
+// 查询工作任务管理详细
+export function getBtTaskInfo(taskInfoId) {
+  return request({
+    url: `/system/threebase/taskInfo/${taskInfoId}`,
+    method: 'get'
+  })
+}
+
+// 新增工作任务管理
+export function addBtTaskInfo(data) {
+  return request({
+    url: '/system/threebase/taskInfo',
+    method: 'post',
+    data
+  })
+}
+
+// 修改工作任务管理
+export function updateBtTaskInfo(data) {
+  return request({
+    url: '/system/threebase/taskInfo',
+    method: 'put',
+    data
+  })
+}
+
+// 删除工作任务管理
+export function delBtTaskInfo(taskInfoIds) {
+  return request({
+    url: `/system/threebase/taskInfo/${taskInfoIds}`,
+    method: 'delete'
+  })
+}
+
+// 导出工作任务管理
+export function exportBtTaskInfo(params) {
+  return request({
+    url: '/system/threebase/taskInfo/export',
+    method: 'post',
+    params
+  })
+}
